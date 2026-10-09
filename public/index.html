@@ -1,0 +1,518 @@
+<title>man joshua-morris</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: one 82-column man page, headings flush left, body indented 7 columns, reverse-video status bar pinned like less. */
+:root {
+  --bg: #f7f8f9;
+  --fg: #1d2126;
+  --dim: #69727c;
+  --link: #0b5aa6;
+  --bar-bg: #1d2126;
+  --bar-fg: #f7f8f9;
+  --hit-bg: #fbe38a;
+  --hit-fg: #1d2126;
+  --cur-bg: #0b5aa6;
+  --cur-fg: #f7f8f9;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101316;
+    --fg: #d5dadf;
+    --dim: #7d8791;
+    --link: #74b9e6;
+    --bar-bg: #d5dadf;
+    --bar-fg: #101316;
+    --hit-bg: #5c4d12;
+    --hit-fg: #f6ecc2;
+    --cur-bg: #74b9e6;
+    --cur-fg: #101316;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101316;
+  --fg: #d5dadf;
+  --dim: #7d8791;
+  --link: #74b9e6;
+  --bar-bg: #d5dadf;
+  --bar-fg: #101316;
+  --hit-bg: #5c4d12;
+  --hit-fg: #f6ecc2;
+  --cur-bg: #74b9e6;
+  --cur-fg: #101316;
+  color-scheme: dark;
+}
+
+body {
+  --ind: 7ch;
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 24px 80px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.6 var(--mono);
+}
+@media (max-width: 560px) {
+  body { --ind: 3ch; font-size: 14px; }
+}
+body[data-view="plain"] {
+  --ind: 0ch;
+  font: 17px/1.65 var(--sans);
+}
+
+.page { max-width: 82ch; margin-inline: auto; display: flex; flex-direction: column; gap: 1.6em; }
+body[data-view="plain"] .page { max-width: 64ch; }
+
+.prompt { margin: 0; color: var(--dim); }
+.hdr, .ftr { display: flex; justify-content: space-between; gap: 1ch; }
+.ftr { color: var(--dim); }
+body[data-view="plain"] .prompt,
+body[data-view="plain"] .hdr,
+body[data-view="plain"] .ftr { display: none; }
+
+main { display: flex; flex-direction: column; gap: 1.6em; }
+.sec { scroll-margin-top: 16px; }
+h2 {
+  margin: 0;
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+body[data-view="plain"] h2 {
+  text-transform: none;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-bottom: 0.4em;
+}
+.b { display: flex; flex-direction: column; gap: 1em; margin-left: var(--ind); min-width: 0; }
+.b p, .b pre { margin: 0; }
+pre { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* ASCII diagrams must keep their columns: no wrapping, scroll sideways on narrow screens. */
+.b pre.diagram { white-space: pre; overflow-wrap: normal; overflow-x: auto; margin-top: 1em; }
+body[data-view="plain"] pre,
+body[data-view="plain"] dt { font-family: var(--mono); font-size: 0.9em; }
+
+dl { margin: 0; display: flex; flex-direction: column; gap: 1em; }
+dl > div { display: flex; flex-direction: column; min-width: 0; }
+dt { font-weight: 700; overflow-wrap: anywhere; }
+dd { margin: 0 0 0 var(--ind); }
+body[data-view="plain"] dd { margin-left: 2ch; }
+
+b { font-weight: 700; }
+u { text-decoration: underline; text-underline-offset: 0.18em; }
+a { color: var(--link); text-underline-offset: 0.18em; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+mark.hit { background: var(--hit-bg); color: var(--hit-fg); }
+mark.hit.cur { background: var(--cur-bg); color: var(--cur-fg); }
+
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2ch;
+  padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+  background: var(--bar-bg);
+  color: var(--bar-fg);
+  font: 13px/1.5 var(--mono);
+}
+#stat { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+@media (min-width: 560px) { #stat::before { content: "joshua-morris(1) "; } }
+.acts { display: flex; gap: 2ch; flex: none; }
+.bar button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.bar button:focus-visible, .bar input:focus-visible { outline-color: var(--bar-fg); }
+@media (max-width: 480px) { #b-help { display: none; } }
+#prompt { display: flex; align-items: center; gap: 1ch; flex: 1; min-width: 0; }
+#q {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+}
+
+#help {
+  position: fixed;
+  inset-inline: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 44ch;
+  margin-inline: auto;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--fg);
+  font-size: 13px;
+}
+#help pre { margin: 0; }
+</style>
+
+<div class="page">
+  <p class="prompt" aria-hidden="true">$ man joshua-morris</p>
+
+  <div class="hdr"><span>JOSHUA-MORRIS(1)</span><span>User Commands</span><span>JOSHUA-MORRIS(1)</span></div>
+
+  <main id="man">
+    <section class="sec" id="name">
+      <h2>Name</h2>
+      <div class="b"><p>joshua-morris - Joshua Morris, full-stack software engineer</p></div>
+    </section>
+
+    <section class="sec" id="synopsis">
+      <h2>Synopsis</h2>
+      <div class="b"><p><b>joshua-morris</b> [<u>OPTION</u>]... [<u>PROJECT</u>]...</p></div>
+    </section>
+
+    <section class="sec" id="description">
+      <h2>Description</h2>
+      <div class="b">
+        <p><b>Joshua Morris</b> is a full-stack software engineer in the NYC metro area with four years in financial services, building data-heavy analytics applications with Java, Spring Boot, Angular and Snowflake.</p>
+        <p>He owns features from API design through production launch, and has done the deployment and infrastructure work to get them there. See <a href="#experience" data-goto="experience">Experience</a> for details.</p>
+      </div>
+    </section>
+
+    <section class="sec" id="options">
+      <h2>Options</h2>
+      <div class="b">
+        <dl>
+          <div><dt>--projects</dt><dd>Print the list of projects (see <a href="#projects" data-goto="projects">Projects</a>). On by default.</dd></div>
+          <div><dt>--contact</dt><dd>Print contact information (see <a href="#author" data-goto="author">Author</a>) and exit.</dd></div>
+          <div><dt>--resume</dt><dd>Download the resume as a PDF (<a href="Joshua_Morris_Resume.pdf" download>Joshua_Morris_Resume.pdf</a>) and exit.</dd></div>
+          <div><dt>--debug</dt><dd>Print verbose diagnostics while running. Mostly prints "works on my machine". Off by default.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="experience">
+      <h2>Experience</h2>
+      <div class="b">
+        <p><b>BNY</b>, Software Engineer, August 2022 to present.</p>
+        <dl>
+          <div>
+            <dt>$ joshua-morris insights-discovery</dt>
+            <dd>Built the backend for a human-in-the-loop review workflow for AI-generated Insights on a payments analytics platform: a nine-status state machine, 11 REST endpoints and an append-only audit trail on Snowflake.</dd>
+          </div>
+          <div>
+            <dt>$ joshua-morris lockbox-navigator</dt>
+            <dd>Owned this client-facing lockbox analytics widget end to end across Angular, Spring Boot APIs and Snowflake queries, with cross-filtering and a demo-data mode. Used by 27 clients. Server-side pagination, sorting and lazy loading took its detail tables from a 1K-row ceiling to 100K+ records.</dd>
+          </div>
+          <div>
+            <dt>$ joshua-morris pivot-export</dt>
+            <dd>Resolved an out-of-memory failure in the Pivot data export pipeline on an Imply Druid cluster. Exports of 5-6 MB files dropped from several hours to under a minute.</dd>
+          </div>
+          <div>
+            <dt>$ joshua-morris provisioning-ui</dt>
+            <dd>Built a self-service provisioning workflow in the React UI of an internal automation platform, with multi-step requests, status tracking and config-driven validation that blocks invalid server and package selections.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="projects">
+      <h2>Projects</h2>
+      <div class="b">
+        <dl>
+          <div>
+            <dt>$ joshua-morris mta-api</dt>
+            <dd>
+              <p>A REST API on Bun that unifies the MTA's static and real-time GTFS feeds into plain JSON, with schema-validated responses and a generated OpenAPI spec. Source at <a href="https://github.com/joshmorr/mta-api" target="_blank" rel="noopener">github.com/joshmorr/mta-api</a>.</p>
+              <p>Real-time protobuf feeds are decoded with per-feed TTL caching and in-flight request deduplication to cut redundant upstream fetches. A daily GitHub Actions pipeline compiles about 2.4M rows of static schedule data into a read-only SQLite snapshot in object storage, which instances download on boot to keep cold starts fast and memory small. Nine custom MCP tools let LLM agents query transit data through the API's service layer.</p>
+              <pre class="diagram" role="img" aria-label="Architecture: a daily build turns MTA static GTFS zips into a SQLite file in object storage that instances download on boot; the REST routes and MCP tools both call one service layer, which reads that SQLite file for schedule data and a 10 second in-memory cache for realtime feeds fetched from the MTA." tabindex="0">BUILD  daily, GitHub Actions
+
+  MTA zip --> unzip --> stream CSV --> mta.db --> bucket
+  (S3)                  ~2.4M rows     (SQLite)    |
+                                                   | on boot
+SERVE  stateless                                   v
+                                               +-----------+
+  REST  GET /arrivals --+                      | SQLite    |
+                        +--> services/ ------> | read-only |
+  MCP   POST /mcp ------+        |             +-----------+
+                                 |
+                                 |             +-----------+
+                                 +-----------> | rtCache   |
+                                               | 10s TTL   |
+                                               +-----------+
+                                                   ^
+                              fetch on miss        |
+                                               MTA GTFS-RT</pre>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="environment">
+      <h2>Environment</h2>
+      <div class="b">
+        <dl>
+          <div><dt>LANGUAGES</dt><dd>Java, TypeScript, SQL.</dd></div>
+          <div><dt>FRAMEWORKS</dt><dd>Spring Boot, Angular, React, Bun.</dd></div>
+          <div><dt>DATABASES</dt><dd>Snowflake, Imply Druid, SQLite.</dd></div>
+          <div><dt>TOOLING</dt><dd>Docker, Ansible, GitHub Actions.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="education">
+      <h2>Education</h2>
+      <div class="b">
+        <dl>
+          <div><dt>SUNY New Paltz</dt><dd>BS, Computer Science. August 2019 to May 2021.</dd></div>
+          <div><dt>Suffolk County Community College</dt><dd>AS, Computer Science. January 2017 to May 2019.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec" id="bugs">
+      <h2>Bugs</h2>
+      <div class="b">
+        <p>Report bugs to <a href="mailto:morrisjosh792@gmail.com"><b>morrisjosh792@gmail.com</b></a> with steps to reproduce and the output of <b>joshua-morris --debug</b>.</p>
+      </div>
+    </section>
+
+    <section class="sec" id="see-also">
+      <h2>See Also</h2>
+      <div class="b"><p><a href="https://github.com/joshmorr" target="_blank" rel="noopener">github(1)</a>, <a href="https://linkedin.com/in/joshua-m-993140165" target="_blank" rel="noopener">linkedin(1)</a>, <a href="Joshua_Morris_Resume.pdf" download>resume(1)</a></p></div>
+    </section>
+
+    <section class="sec" id="author">
+      <h2>Author</h2>
+      <div class="b"><p>Written by Joshua Morris. Contact: <a href="mailto:morrisjosh792@gmail.com"><b>morrisjosh792@gmail.com</b></a></p></div>
+    </section>
+  </main>
+
+  <div class="ftr"><span>joshua-morris 1.0</span><span>October 2026</span><span>JOSHUA-MORRIS(1)</span></div>
+</div>
+
+<div class="bar" id="bar">
+  <span id="stat" role="status"></span>
+  <span class="acts" id="acts">
+    <button type="button" id="b-search">/ search</button>
+    <button type="button" id="b-help">h help</button>
+    <button type="button" id="b-view">q plain</button>
+  </span>
+  <form id="prompt" hidden>
+    <label for="q">/</label>
+    <input id="q" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search the page">
+  </form>
+</div>
+
+<aside id="help" role="dialog" aria-label="Keyboard help" hidden>
+<pre>j k      scroll down / up
+space b  page down / up
+d u      half page down / up
+g G      top / bottom
+/        search
+n N      next / previous match
+esc      clear search
+q        plain view (q again returns)
+h        this help
+
+any key closes this box</pre>
+</aside>
+
+<script>
+(function () {
+  var main = document.getElementById('man');
+  var stat = document.getElementById('stat');
+  var acts = document.getElementById('acts');
+  var form = document.getElementById('prompt');
+  var input = document.getElementById('q');
+  var help = document.getElementById('help');
+  var btnView = document.getElementById('b-view');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hits = [], cur = -1, query = '', plain = false, queued = false;
+
+  function lineH() {
+    return parseFloat(getComputedStyle(document.body).lineHeight) || 24;
+  }
+
+  function render() {
+    var s;
+    if (plain) {
+      s = 'plain view';
+    } else {
+      var h = lineH();
+      var de = document.documentElement;
+      var y = window.scrollY || de.scrollTop || 0;
+      var total = Math.max(1, Math.round(de.scrollHeight / h));
+      var n = Math.min(total, Math.round(y / h) + 1);
+      var end = window.innerHeight + y >= de.scrollHeight - 2;
+      s = 'line ' + n + '/' + total + (end ? ' (END)' : '');
+    }
+    if (query) {
+      s += hits.length
+        ? '  /' + query + ' (' + (cur + 1) + '/' + hits.length + ')'
+        : '  Pattern not found: ' + query;
+    }
+    stat.textContent = s;
+  }
+
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; render(); });
+  }
+
+  function clearMarks() {
+    var ms = main.querySelectorAll('mark.hit');
+    for (var i = 0; i < ms.length; i++) {
+      var m = ms[i], p = m.parentNode;
+      p.replaceChild(document.createTextNode(m.textContent), m);
+      p.normalize();
+    }
+    hits = [];
+    cur = -1;
+  }
+
+  function go(i) {
+    if (!hits.length) return;
+    if (cur >= 0 && hits[cur]) hits[cur].classList.remove('cur');
+    cur = (i + hits.length) % hits.length;
+    hits[cur].classList.add('cur');
+    hits[cur].scrollIntoView({ block: 'center', behavior: 'auto' });
+    render();
+  }
+
+  function find(q) {
+    clearMarks();
+    query = q;
+    if (!q) { render(); return; }
+    var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, null);
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (t) {
+      var txt = t.nodeValue, last = 0, frag = null, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(txt))) {
+        if (!m[0].length) { re.lastIndex++; continue; }
+        frag = frag || document.createDocumentFragment();
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var k = document.createElement('mark');
+        k.className = 'hit';
+        k.textContent = m[0];
+        frag.appendChild(k);
+        last = m.index + m[0].length;
+      }
+      if (frag) {
+        if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+        t.parentNode.replaceChild(frag, t);
+      }
+    });
+    hits = Array.prototype.slice.call(main.querySelectorAll('mark.hit'));
+    if (hits.length) {
+      var start = 0;
+      for (var i = 0; i < hits.length; i++) {
+        if (hits[i].getBoundingClientRect().top >= 40) { start = i; break; }
+      }
+      go(start);
+    } else {
+      render();
+    }
+  }
+
+  function openPrompt() {
+    stat.hidden = true;
+    acts.hidden = true;
+    form.hidden = false;
+    input.value = '';
+    input.focus();
+  }
+
+  function closePrompt() {
+    form.hidden = true;
+    stat.hidden = false;
+    acts.hidden = false;
+  }
+
+  function setPlain(on) {
+    plain = on;
+    if (on) document.body.setAttribute('data-view', 'plain');
+    else document.body.removeAttribute('data-view');
+    btnView.textContent = on ? 'q man page' : 'q plain';
+    render();
+  }
+
+  function scrollBy(dy) {
+    window.scrollBy({ top: dy, behavior: 'auto' });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = input.value.trim();
+    closePrompt();
+    find(v);
+  });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { e.preventDefault(); closePrompt(); }
+    e.stopPropagation();
+  });
+
+  document.getElementById('b-search').addEventListener('click', openPrompt);
+  document.getElementById('b-help').addEventListener('click', function () { help.hidden = false; });
+  btnView.addEventListener('click', function () { setPlain(!plain); });
+
+  document.addEventListener('click', function (e) {
+    if (!help.hidden) { help.hidden = true; return; }
+    var a = e.target.closest ? e.target.closest('a[data-goto]') : null;
+    if (!a) return;
+    e.preventDefault();
+    var t = document.getElementById(a.getAttribute('data-goto'));
+    if (t) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var tag = e.target && e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (!help.hidden) { help.hidden = true; e.preventDefault(); return; }
+    var h = lineH(), vh = window.innerHeight;
+    switch (e.key) {
+      case 'j': scrollBy(h * 3); break;
+      case 'k': scrollBy(-h * 3); break;
+      case ' ': scrollBy(vh * 0.9); break;
+      case 'b': scrollBy(-vh * 0.9); break;
+      case 'd': scrollBy(vh / 2); break;
+      case 'u': scrollBy(-vh / 2); break;
+      case 'g': window.scrollTo({ top: 0, behavior: 'auto' }); break;
+      case 'G': window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'auto' }); break;
+      case '/': e.preventDefault(); openPrompt(); break;
+      case 'n': go(cur + 1); break;
+      case 'N': go(cur - 1); break;
+      case 'h': case '?': help.hidden = false; break;
+      case 'q': setPlain(!plain); break;
+      case 'Escape': find(''); break;
+      default: return;
+    }
+    e.preventDefault();
+  });
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  render();
+})();
+</script>
