@@ -220,15 +220,19 @@ mark.hit.cur { background: var(--cur-bg); color: var(--cur-fg); }
         <dl>
           <div>
             <dt>$ joshua-morris insights-discovery</dt>
-            <dd>Built the backend for a human-in-the-loop review workflow for AI-generated Insights on a payments analytics platform: a nine-status state machine, 11 REST endpoints and an append-only audit trail on Snowflake.</dd>
+            <dd>Built the backend for a human-in-the-loop review workflow for AI-generated Insights on a payments analytics platform: a nine-status state machine, 9 documented REST endpoints and an append-only Snowflake audit trail with guarded MERGE writes proven under concurrent load. Covered by about 460 unit tests and 10 Snowflake integration-test classes.</dd>
           </div>
           <div>
             <dt>$ joshua-morris lockbox-navigator</dt>
-            <dd>Owned this client-facing lockbox analytics widget end to end across Angular, Spring Boot APIs and Snowflake queries, with cross-filtering and a demo-data mode. Used by 27 clients. Server-side pagination, sorting and lazy loading took its detail tables from a 1K-row ceiling to 100K+ records.</dd>
+            <dd>Owned this client-facing analytics product for BNY's Lockbox service from approved designs to production across Angular, Spring Boot and Snowflake, with cross-filtering, drill-down and a feature-flagged demo mode with masked data. Removed the 1,000-row cap end to end with ag-grid lazy loading, server-side pagination and sorting, and a query strategy that scales past the limit.</dd>
+          </div>
+          <div>
+            <dt>$ joshua-morris druid-upgrade</dt>
+            <dd>Took over the Imply Druid upgrade (2024.01 LTS to 2025 LTS, Java 11 to 17). Made the Ansible playbook upgrade-safe, root-caused a stale ZooKeeper host in inventory, and verified ingestion jobs.</dd>
           </div>
           <div>
             <dt>$ joshua-morris pivot-export</dt>
-            <dd>Resolved an out-of-memory failure in the Pivot data export pipeline on an Imply Druid cluster. Exports of 5-6 MB files dropped from several hours to under a minute.</dd>
+            <dd>Root-caused production Pivot export failures to Node heap exhaustion on large exports. Shipped a mitigation and an async-download fix backed by MSQ durable storage on S3.</dd>
           </div>
           <div>
             <dt>$ joshua-morris provisioning-ui</dt>
@@ -245,12 +249,12 @@ mark.hit.cur { background: var(--cur-bg); color: var(--cur-fg); }
           <div>
             <dt>$ joshua-morris mta-api</dt>
             <dd>
-              <p>A REST API on Bun that unifies the MTA's static and real-time GTFS feeds into plain JSON, with schema-validated responses and a generated OpenAPI spec. Source at <a href="https://github.com/joshmorr/mta-api" target="_blank" rel="noopener">github.com/joshmorr/mta-api</a>.</p>
-              <p>Real-time protobuf feeds are decoded with per-feed TTL caching and in-flight request deduplication to cut redundant upstream fetches. A daily GitHub Actions pipeline compiles about 2.4M rows of static schedule data into a read-only SQLite snapshot in object storage, which instances download on boot to keep cold starts fast and memory small. Nine custom MCP tools let LLM agents query transit data through the API's service layer.</p>
+              <p>A REST API on Bun and Hono that unifies the MTA's static and real-time GTFS feeds (subway, LIRR, Metro-North) into plain JSON across 10 endpoints, with Zod-validated requests and an OpenAPI 3 spec generated from the same schemas. Source at <a href="https://github.com/joshmorr/mta-api" target="_blank" rel="noopener">github.com/joshmorr/mta-api</a>.</p>
+              <p>Real-time protobuf feeds are decoded with per-feed caching, in-flight request deduplication and stale-on-error fallback to cut redundant upstream fetches. A daily GitHub Actions pipeline compiles about 2.9M rows of static schedule data into a checksum-verified SQLite snapshot in object storage, which instances download on boot, letting them run on a 512MB VM instead of 2GB. Nine read-only MCP tools over stdio and streamable HTTP call the same service layer as the REST routes in-process, so LLM agents can query transit data directly.</p>
               <pre class="diagram" role="img" aria-label="Architecture: a daily build turns MTA static GTFS zips into a SQLite file in object storage that instances download on boot; the REST routes and MCP tools both call one service layer, which reads that SQLite file for schedule data and a 10 second in-memory cache for realtime feeds fetched from the MTA." tabindex="0">BUILD  daily, GitHub Actions
 
   MTA zip --> unzip --> stream CSV --> mta.db --> bucket
-  (S3)                  ~2.4M rows     (SQLite)    |
+  (S3)                  ~2.9M rows    (SQLite)    |
                                                    | on boot
 SERVE  stateless                                   v
                                                +-----------+
